@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "hpa-gene-specificity": {
+      "command": "python",
+      "args": [
+        "C:\\path\\to\\scrnaseq-gene-specificity-screen\\mcp_server\\server.py"
+      ]
+    }
+  }
+}

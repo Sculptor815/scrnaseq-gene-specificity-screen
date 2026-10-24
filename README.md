@@ -6,7 +6,7 @@
 
 *Real output: `ITGA2B` across HPA cell types. The chart is cropped to the 30 most relevant rows purely so this page stays readable — **the pipeline always plots all 154 cell types**, ordered with your configured groups first. The whole megakaryocyte lineage is elevated (Platelets 3,636 nCPM, Megakaryocyte progenitors 853, Megakaryocytes 433, Megakaryocyte-Erythroid progenitors 285) while every other cell type stays below 102. → [full 154-row chart](docs/demo_itga2b_cell_types_full.png) · [all 51 tissues](docs/demo_itga2b_tissues.png)*
 
-For every gene in your list the pipeline downloads the HPA RNA matrices, finds the peak-expressing cell type, and selects the genes whose **peak cell type falls inside your target cell-type group** (by default the megakaryocyte lineage). It writes per-cell-type and per-tissue bar charts plus an Excel/TSV report. It ships as an agent skill (`SKILL.md`) and every step is also a plain Python CLI.
+For every gene in your list the pipeline downloads the HPA RNA matrices, finds the peak-expressing cell type, and selects the genes whose **peak cell type falls inside your target cell-type group** (by default the megakaryocyte lineage). It writes per-cell-type and per-tissue bar charts plus an Excel/TSV report. It ships as a plain Python CLI, an agent skill (`SKILL.md`), and a local MCP server for compatible AI clients.
 
 ## Install
 
@@ -29,6 +29,25 @@ git clone https://github.com/Sculptor815/scrnaseq-gene-specificity-screen.git \
 git clone https://github.com/Sculptor815/scrnaseq-gene-specificity-screen.git \
     ~/.agents/skills/scrnaseq-gene-specificity-screen
 ```
+
+## MCP server
+
+The optional MCP interface exposes the same pipeline to MCP-compatible AI clients through four tools: `run_specificity_screen`, `screen_existing_workbook`, `get_screening_results`, and `list_available_cell_types`. It requires Python 3.11+, uses local stdio transport, and stores each run separately under `mcp_runs/<run_id>/`.
+
+```bash
+python -m pip install -r requirements-mcp.txt
+mcp dev mcp_server/server.py  # inspect and call the tools locally
+```
+
+For Claude Desktop, register the server from the environment where you installed the dependencies:
+
+```bash
+mcp install mcp_server/server.py --name "HPA Gene Specificity"
+```
+
+Other clients can launch `python /absolute/path/to/mcp_server/server.py`; see [`examples/mcp-claude-desktop.json`](examples/mcp-claude-desktop.json) for a configuration template. Use the Python executable from the same environment in which you installed `requirements-mcp.txt`. Input paths refer to files on the machine running the server; omit `config_path` to use `assets/config.example.json`.
+
+Example request: *“Screen `examples/genes.example.csv` with the default megakaryocyte config, skip plots, and summarize the selected genes.”*
 
 ## Quick start
 

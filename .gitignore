@@ -23,6 +23,7 @@ htmlcov/
 
 # Pipeline outputs and caches (never commit run results or HPA batch caches)
 out/
+mcp_runs/
 cache/
 gene_plots/
 HPA_RNA_expression.xlsx
